@@ -38,6 +38,14 @@ This repository is the canonical reference implementation.
 Other projects may be compatible with CDMAD concepts without being considered
 canonical.
 
+## Quickstart
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -e .
+uvicorn app.main:app --reload --port 8000
+```
+
 ## License
 
 MIT License. Attribution retained.
