@@ -1,0 +1,16 @@
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    container_name: cdmad-vdb-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-cdmad_vdb}
+      POSTGRES_USER: ${POSTGRES_USER:-cdmad}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cdmad}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db/migrations:/migrations:ro
+
+volumes:
+  db_data:

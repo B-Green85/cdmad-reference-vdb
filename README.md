@@ -46,6 +46,20 @@ pip install -e .
 uvicorn app.main:app --reload --port 8000
 ```
 
+## Database (Docker)
+
+```bash
+cp .env.example .env          # edit credentials if needed
+docker compose up -d
+docker exec -it cdmad-vdb-db psql -U cdmad -d cdmad_vdb -f /migrations/001_init.sql
+```
+
+Verify:
+
+```bash
+docker exec -it cdmad-vdb-db psql -U cdmad -d cdmad_vdb -c "\d+ docs"
+```
+
 ## License
 
 MIT License. Attribution retained.
