@@ -76,6 +76,17 @@ bash seed/seed.sh
 This inserts the canonical CDMAD chunks from `seed/chunks.json` into the database
 via `/v1/docs/upsert`. Set `BASE_URL` to override the default `http://127.0.0.1:8000`.
 
+## Proof Pack
+
+Collect a read-only evidence snapshot of the current project state:
+
+```bash
+bash scripts/proof_pack.sh
+```
+
+Requires the API and database to be running. Set `BASE_URL`, `POSTGRES_PORT`,
+`POSTGRES_USER`, `POSTGRES_DB` to override defaults.
+
 ## License
 
 MIT License. Attribution retained.
