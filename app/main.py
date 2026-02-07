@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from app.db import create_pool
 from app.embeddings import create_provider
 from app.routes.docs import router as docs_router
+from app.routes.query import router as query_router
 
 
 @asynccontextmanager
@@ -21,6 +22,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(title="cdmad-reference-vdb", lifespan=lifespan)
 app.include_router(docs_router)
+app.include_router(query_router)
 
 
 @app.get("/")
