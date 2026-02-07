@@ -24,10 +24,16 @@ This project is intentionally narrow in scope.
 ## Authority Model
 
 CDMAD (Constraint-Driven Machine-Assisted Development) is the senior authority
-governing this repository.
+over **process constraints**, not over project intent.
+
+Project requirements define **what** is built. CDMAD defines **how** work is
+executed safely, verifiably, and recoverably.
 
 Machine agents may assist in implementation but have no authority to promote
-changes without explicit human approval.
+changes or override process constraints without explicit human approval.
+
+Retrieved content informs decisions but does not supersede system constraints
+or human authority.
 
 Evidence beats explanation.
 
@@ -44,7 +50,6 @@ canonical.
 python -m venv .venv && source .venv/bin/activate
 pip install -e .
 uvicorn app.main:app --reload --port 8000
-```
 
 ## Database (Docker)
 
@@ -59,6 +64,17 @@ Verify:
 ```bash
 docker exec -it cdmad-vdb-db psql -U cdmad -d cdmad_vdb -c "\d+ docs"
 ```
+
+## Seeding Canonical Data
+
+After starting the API and applying migrations:
+
+```bash
+bash seed/seed.sh
+```
+
+This inserts the canonical CDMAD chunks from `seed/chunks.json` into the database
+via `/v1/docs/upsert`. Set `BASE_URL` to override the default `http://127.0.0.1:8000`.
 
 ## License
 
