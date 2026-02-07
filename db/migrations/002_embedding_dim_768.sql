@@ -1,0 +1,6 @@
+BEGIN;
+
+ALTER TABLE docs
+  ALTER COLUMN embedding TYPE vector(768);
+
+COMMIT;
