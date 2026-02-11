@@ -9,7 +9,12 @@ data:
   POSTGRES_PORT: {{ include "cdmad-vdb.postgresPort" . | quote }}
   POSTGRES_DB: {{ include "cdmad-vdb.postgresDatabase" . | quote }}
   POSTGRES_USER: {{ include "cdmad-vdb.postgresUser" . | quote }}
-  EMBEDDING_PROVIDER: {{ .Values.api.embeddingProvider | quote }}
-  EMBEDDING_MODEL: {{ .Values.api.embeddingModel | quote }}
-  OLLAMA_BASE_URL: {{ .Values.api.ollamaBaseUrl | quote }}
-  VECTOR_DIMENSION: {{ .Values.api.vectorDimension | quote }}
+  EMBEDDING_ENDPOINT_URL: {{ required "embeddings.endpointUrl is required" .Values.embeddings.endpointUrl | quote }}
+  EMBEDDING_MODEL: {{ required "embeddings.model is required" .Values.embeddings.model | quote }}
+  EMBEDDING_DIMENSION: {{ .Values.embeddings.dimension | quote }}
+  {{- with .Values.embeddings.responsePath }}
+  EMBEDDING_RESPONSE_PATH: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.embeddings.timeoutSeconds }}
+  EMBEDDING_TIMEOUT_SECONDS: {{ . | quote }}
+  {{- end }}

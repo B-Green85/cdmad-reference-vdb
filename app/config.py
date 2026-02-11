@@ -12,8 +12,16 @@ def get_postgres_dsn() -> str:
     return f"postgresql://{user}:{password}@{host}:{port}/{db}"
 
 
-EMBEDDING_PROVIDER: str = os.environ.get("EMBEDDING_PROVIDER", "ollama")
-EMBEDDING_MODEL: str = os.environ.get("EMBEDDING_MODEL", "text-embedding-3-small")
-OLLAMA_BASE_URL: str = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
-OPENAI_API_KEY: str = os.environ.get("OPENAI_API_KEY", "")
-VECTOR_DIMENSION: int = int(os.getenv("VECTOR_DIMENSION", "768"))
+# Vendor-neutral external embeddings contract (BYO HTTPS endpoint)
+EMBEDDING_ENDPOINT_URL: str = os.environ.get("EMBEDDING_ENDPOINT_URL", "")
+EMBEDDING_MODEL: str = os.environ.get("EMBEDDING_MODEL", "")
+EMBEDDING_DIMENSION: int = int(os.environ.get("EMBEDDING_DIMENSION", "768"))
+EMBEDDING_RESPONSE_PATH: str = os.environ.get(
+    "EMBEDDING_RESPONSE_PATH",
+    "data[0].embedding",
+)
+EMBEDDING_TIMEOUT_SECONDS: int = int(os.environ.get("EMBEDDING_TIMEOUT_SECONDS", "30"))
+
+# Optional: JSON-encoded headers dict to send with embedding requests, e.g.
+# {"Authorization":"Bearer ...","X-Api-Key":"..."}
+EMBEDDING_HEADERS_JSON: str = os.environ.get("EMBEDDING_HEADERS_JSON", "")

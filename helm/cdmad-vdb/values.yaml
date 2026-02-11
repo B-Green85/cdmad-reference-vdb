@@ -47,16 +47,23 @@ ingress:
   # -- Ingress TLS configuration
   tls: []
 
-# -- API configuration
-api:
-  # -- Embedding provider: "ollama" or "openai"
-  embeddingProvider: ollama
-  # -- Embedding model name
-  embeddingModel: text-embedding-3-small
-  # -- Ollama base URL (only used when embeddingProvider=ollama)
-  ollamaBaseUrl: "http://ollama:11434"
+# -- External embeddings service (vendor-neutral)
+embeddings:
+  # -- Embedding API endpoint URL (required, no default)
+  endpointUrl: ""
+  # -- Name of an existing Secret whose data keys are injected as env vars
+  #    for auth headers (e.g. a Secret with key AUTHORIZATION=Bearer xxx)
+  headersSecretRef: 
+    name: ""
+    key: ""
+  # -- Embedding model identifier (required, no default)
+  model: ""
   # -- Vector embedding dimension
-  vectorDimension: 768
+  dimension: 768
+  # -- JSONPath to extract the embedding array from the response body
+  responsePath: "data[0].embedding"
+  # -- HTTP request timeout in seconds
+  timeoutSeconds: 30
 
 # -- External database connection (Mode B)
 externalDatabase:
@@ -108,9 +115,6 @@ seed:
   backoffLimit: 1
   # -- Expected SHA-256 hash of seed/chunks.json (empty = skip verification)
   expectedHash: ""
-
-# -- OpenAI API key (only used when api.embeddingProvider=openai)
-openaiApiKey: ""
 
 # -- Pod resource requests/limits for the API
 resources: {}

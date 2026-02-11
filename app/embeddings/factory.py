@@ -1,21 +1,9 @@
 from __future__ import annotations
 
-from app.config import EMBEDDING_PROVIDER
 from app.embeddings.base import EmbeddingProvider
+from app.embeddings.external import ExternalHTTPProvider
 
 
 def create_provider() -> EmbeddingProvider:
-    provider = EMBEDDING_PROVIDER.lower()
-    if provider == "ollama":
-        from app.embeddings.ollama import OllamaProvider
-
-        return OllamaProvider()
-    elif provider == "openai":
-        from app.embeddings.openai import OpenAIProvider
-
-        return OpenAIProvider()
-    else:
-        raise RuntimeError(
-            f"Unknown EMBEDDING_PROVIDER: {EMBEDDING_PROVIDER!r}. "
-            f"Supported: ollama, openai"
-        )
+    # Vendor-neutral: embeddings are fetched via external HTTP endpoint contract.
+    return ExternalHTTPProvider()

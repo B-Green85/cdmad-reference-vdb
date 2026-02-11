@@ -9,6 +9,8 @@ from app.db import create_pool
 from app.embeddings import create_provider
 from app.routes.docs import router as docs_router
 from app.routes.query import router as query_router
+from dotenv import load_dotenv
+load_dotenv()
 
 
 @asynccontextmanager

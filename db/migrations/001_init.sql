@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS docs (
     role        TEXT,
     tags        TEXT[] NOT NULL DEFAULT '{}',
     text        TEXT NOT NULL,
-    embedding   VECTOR(1536) NOT NULL,
+    embedding   embedding VECTOR({{ required "embeddings.dimension is required" .Values.embeddings.dimension }}) NOT NULL,
     created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, Request
 
 from app.models import UpsertRequest, UpsertResponse
 
-from app.config import VECTOR_DIMENSION
+from app.config import EMBEDDING_DIMENSION
 
 router = APIRouter(prefix="/v1/docs", tags=["docs"])
 
@@ -43,5 +43,4 @@ async def upsert_doc(body: UpsertRequest, request: Request) -> UpsertResponse:
     return UpsertResponse(
     id=body.id,
     status="upserted",
-    embedding_dim=VECTOR_DIMENSION,
-)
+    embedding_dim=EMBEDDING_DIMENSION,)

@@ -8,6 +8,7 @@ dependencies = [
     "uvicorn[standard]>=0.34,<1",
     "psycopg[binary,pool]>=3.2,<4",
     "httpx>=0.27,<1",
+    "jsonpath-ng>=1.7.0",
 ]
 
 [tool.setuptools.packages.find]
