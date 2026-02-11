@@ -1,0 +1,125 @@
+# -- Number of API replicas
+replicaCount: 1
+
+image:
+  # -- Container image repository
+  repository: cdmad-vdb
+  # -- Image pull policy
+  pullPolicy: IfNotPresent
+  # -- Image tag (defaults to chart appVersion)
+  tag: ""
+
+# -- Image pull secrets
+imagePullSecrets: []
+
+# -- Override the chart name
+nameOverride: ""
+# -- Override the full release name
+fullnameOverride: ""
+
+serviceAccount:
+  # -- Create a ServiceAccount
+  create: true
+  # -- ServiceAccount name (auto-generated if empty)
+  name: ""
+  # -- Annotations for the ServiceAccount
+  annotations: {}
+
+service:
+  # -- Service type
+  type: ClusterIP
+  # -- Service port
+  port: 8000
+
+ingress:
+  # -- Enable Ingress (disabled by default)
+  enabled: false
+  # -- Ingress class name
+  className: ""
+  # -- Ingress annotations
+  annotations: {}
+  # -- Ingress host configuration
+  hosts:
+    - host: cdmad-vdb.local
+      paths:
+        - path: /
+          pathType: Prefix
+  # -- Ingress TLS configuration
+  tls: []
+
+# -- API configuration
+api:
+  # -- Embedding provider: "ollama" or "openai"
+  embeddingProvider: ollama
+  # -- Embedding model name
+  embeddingModel: text-embedding-3-small
+  # -- Ollama base URL (only used when embeddingProvider=ollama)
+  ollamaBaseUrl: "http://ollama:11434"
+  # -- Vector embedding dimension
+  vectorDimension: 768
+
+# -- External database connection (Mode B)
+externalDatabase:
+  # -- Postgres host (required when postgres.enabled=false)
+  host: ""
+  # -- Postgres port
+  port: 5432
+  # -- Postgres database name
+  database: cdmad_vdb
+  # -- Postgres username
+  username: cdmad
+  # -- Postgres password (ignored if existingSecret is set)
+  password: ""
+  # -- Use an existing Secret for database credentials
+  existingSecret: ""
+  # -- Key in the existing Secret that holds the password
+  existingSecretKey: POSTGRES_PASSWORD
+
+# -- In-cluster PostgreSQL with pgvector (Mode A)
+postgres:
+  # -- Deploy an in-cluster Postgres StatefulSet
+  enabled: false
+  image:
+    # -- Postgres image repository
+    repository: pgvector/pgvector
+    # -- Postgres image tag
+    tag: pg17
+    # -- Postgres image pull policy
+    pullPolicy: IfNotPresent
+  # -- Postgres database name
+  database: cdmad_vdb
+  # -- Postgres username
+  username: cdmad
+  # -- Postgres password
+  password: cdmad
+  storage:
+    # -- Storage class (empty = cluster default)
+    storageClass: ""
+    # -- PVC size
+    size: 1Gi
+  # -- Postgres resource requests/limits
+  resources: {}
+
+# -- Seed Job configuration
+seed:
+  # -- Enable the seed Job (runs as post-install helm hook)
+  enabled: false
+  # -- Job backoff limit
+  backoffLimit: 1
+  # -- Expected SHA-256 hash of seed/chunks.json (empty = skip verification)
+  expectedHash: ""
+
+# -- OpenAI API key (only used when api.embeddingProvider=openai)
+openaiApiKey: ""
+
+# -- Pod resource requests/limits for the API
+resources: {}
+
+# -- Node selector for API pods
+nodeSelector: {}
+
+# -- Tolerations for API pods
+tolerations: []
+
+# -- Affinity rules for API pods
+affinity: {}

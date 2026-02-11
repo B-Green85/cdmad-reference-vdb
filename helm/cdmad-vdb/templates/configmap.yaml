@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "cdmad-vdb.fullname" . }}
+  labels:
+    {{- include "cdmad-vdb.labels" . | nindent 4 }}
+data:
+  POSTGRES_HOST: {{ include "cdmad-vdb.postgresHost" . | quote }}
+  POSTGRES_PORT: {{ include "cdmad-vdb.postgresPort" . | quote }}
+  POSTGRES_DB: {{ include "cdmad-vdb.postgresDatabase" . | quote }}
+  POSTGRES_USER: {{ include "cdmad-vdb.postgresUser" . | quote }}
+  EMBEDDING_PROVIDER: {{ .Values.api.embeddingProvider | quote }}
+  EMBEDDING_MODEL: {{ .Values.api.embeddingModel | quote }}
+  OLLAMA_BASE_URL: {{ .Values.api.ollamaBaseUrl | quote }}
+  VECTOR_DIMENSION: {{ .Values.api.vectorDimension | quote }}

@@ -1,0 +1,36 @@
+{{- if .Values.postgres.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "cdmad-vdb.fullname" . }}-migrations
+  labels:
+    {{- include "cdmad-vdb.labels" . | nindent 4 }}
+data:
+  001_init.sql: |
+    CREATE EXTENSION IF NOT EXISTS vector;
+
+    CREATE TABLE IF NOT EXISTS docs (
+        id          TEXT PRIMARY KEY,
+        type        TEXT NOT NULL,
+        role        TEXT,
+        tags        TEXT[] NOT NULL DEFAULT '{}',
+        text        TEXT NOT NULL,
+        embedding   VECTOR(1536) NOT NULL,
+        created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_docs_type ON docs (type);
+    CREATE INDEX IF NOT EXISTS idx_docs_tags ON docs USING GIN (tags);
+  002_embedding_dim_768.sql: |
+    DO $$
+    BEGIN
+      IF EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'docs' AND column_name = 'embedding'
+          AND udt_name = 'vector'
+      ) THEN
+        ALTER TABLE docs ALTER COLUMN embedding TYPE vector(768);
+      END IF;
+    END $$;
+{{- end }}

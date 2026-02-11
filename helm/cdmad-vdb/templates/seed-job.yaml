@@ -1,0 +1,62 @@
+{{- if .Values.seed.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "cdmad-vdb.fullname" . }}-seed
+  labels:
+    {{- include "cdmad-vdb.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: {{ .Values.seed.backoffLimit }}
+  template:
+    metadata:
+      labels:
+        {{- include "cdmad-vdb.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: seed
+    spec:
+      serviceAccountName: {{ include "cdmad-vdb.serviceAccountName" . }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+        - name: wait-for-api
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for API at {{ include "cdmad-vdb.fullname" . }}:{{ .Values.service.port }} ..."
+              until curl -sf http://{{ include "cdmad-vdb.fullname" . }}:{{ .Values.service.port }}/health >/dev/null 2>&1; do
+                sleep 2
+              done
+              echo "API is ready."
+      containers:
+        - name: seed
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              {{- if .Values.seed.expectedHash }}
+              ACTUAL=$(sha256sum /app/seed/chunks.json | cut -d' ' -f1)
+              if [ "$ACTUAL" != "{{ .Values.seed.expectedHash }}" ]; then
+                echo "ERROR: chunks.json hash mismatch"
+                echo "  Expected: {{ .Values.seed.expectedHash }}"
+                echo "  Actual:   $ACTUAL"
+                exit 1
+              fi
+              echo "Hash verified: $ACTUAL"
+              {{- end }}
+              exec bash /app/seed/seed.sh
+          env:
+            - name: BASE_URL
+              value: "http://{{ include "cdmad-vdb.fullname" . }}:{{ .Values.service.port }}"
+      restartPolicy: Never
+{{- end }}

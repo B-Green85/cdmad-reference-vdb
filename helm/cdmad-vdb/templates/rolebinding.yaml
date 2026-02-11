@@ -1,0 +1,16 @@
+{{- if .Values.serviceAccount.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "cdmad-vdb.fullname" . }}
+  labels:
+    {{- include "cdmad-vdb.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "cdmad-vdb.fullname" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "cdmad-vdb.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}

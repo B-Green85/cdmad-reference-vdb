@@ -1,0 +1,31 @@
+CDMAD Reference VDB has been deployed.
+
+API endpoint:
+  kubectl port-forward svc/{{ include "cdmad-vdb.fullname" . }} {{ .Values.service.port }}:{{ .Values.service.port }}
+
+Health check:
+  curl http://localhost:{{ .Values.service.port }}/health
+
+{{- if .Values.seed.enabled }}
+
+Seed job:
+  The seed job runs automatically as a post-install hook.
+  Check status: kubectl get jobs -l app.kubernetes.io/component=seed
+{{- else }}
+
+Seeding:
+  Seed is disabled by default. To seed canonical data, upgrade with:
+    helm upgrade {{ .Release.Name }} ./helm/cdmad-vdb --set seed.enabled=true
+{{- end }}
+
+{{- if .Values.postgres.enabled }}
+
+Database:
+  In-cluster Postgres is running. Data persists via PVC.
+  Connect: kubectl exec -it sts/{{ include "cdmad-vdb.fullname" . }}-postgres -- psql -U {{ .Values.postgres.username }} -d {{ .Values.postgres.database }}
+{{- else }}
+
+Database:
+  Using external database at {{ .Values.externalDatabase.host }}:{{ .Values.externalDatabase.port }}.
+  Ensure migrations have been applied before seeding.
+{{- end }}
