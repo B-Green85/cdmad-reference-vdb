@@ -82,5 +82,5 @@ class ExternalHTTPProvider(EmbeddingProvider):
 
         return out
 
-    async def aclose(self) -> None:
+    async def close(self) -> None:
         await self._client.aclose()
