@@ -116,19 +116,28 @@ helm install cdmad-vdb ./helm/cdmad-vdb -n cdmad \
   --set externalDatabase.password=...
 ```
 
-## Embedding Provider
+## External Embeddings
 
-For production, use OpenAI embeddings:
+CDMAD VDB does not host models. It calls a user-provided HTTPS embeddings endpoint.
 
-```yaml
-api:
-  embeddingProvider: openai
-  embeddingModel: text-embedding-3-small
-openaiApiKey: "sk-..."
-```
+Required:
+- `EMBEDDING_ENDPOINT_URL` (full URL; CDMAD does not construct paths)
+- `EMBEDDING_MODEL`
+- `EMBEDDING_DIMENSION`
 
-Or mount the API key from an existing secret and set the `OPENAI_API_KEY`
-env var via additional environment configuration.
+Optional:
+- `EMBEDDING_RESPONSE_PATH` (default: `data[0].embedding`)
+- `EMBEDDING_HEADERS_JSON` (JSON object of HTTP headers)
+- `EMBEDDING_TIMEOUT_SECONDS`
+
+Request body sent to the endpoint:
+```json
+{ "model": "<EMBEDDING_MODEL>", "input": "<text>" }
+
+Authentication headers can be supplied via:
+
+- `EMBEDDING_HEADERS_JSON` (local development), or
+- a Kubernetes Secret referenced via `embeddings.headersSecretRef`
 
 ## Monitoring
 

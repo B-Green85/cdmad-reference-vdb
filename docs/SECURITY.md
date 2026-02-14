@@ -2,9 +2,7 @@
 
 Security considerations for deploying the CDMAD VDB API on Kubernetes.
 
-## Secrets Management
-
-### Database Credentials
+## Secrets Management & Database Credentials
 
 Never pass passwords via CLI flags in production. Use Kubernetes Secrets:
 
@@ -21,14 +19,23 @@ externalDatabase:
   existingSecretKey: POSTGRES_PASSWORD
 ```
 
-### API Keys
+## External Embeddings
 
-If using OpenAI for embeddings, store the key in a Secret:
+CDMAD VDB does not host models. It calls a user-provided HTTPS embeddings endpoint.
 
-```bash
-kubectl create secret generic cdmad-vdb-openai \
-  --from-literal=OPENAI_API_KEY=sk-...
-```
+Required:
+- `EMBEDDING_ENDPOINT_URL` (full URL; CDMAD does not construct paths)
+- `EMBEDDING_MODEL`
+- `EMBEDDING_DIMENSION`
+
+Optional:
+- `EMBEDDING_RESPONSE_PATH` (default: `data[0].embedding`)
+- `EMBEDDING_HEADERS_JSON` (JSON object of HTTP headers)
+- `EMBEDDING_TIMEOUT_SECONDS`
+
+Request body sent to the endpoint:
+```json
+{ "model": "<EMBEDDING_MODEL>", "input": "<text>" }
 
 Mount it as an environment variable in the deployment.
 
