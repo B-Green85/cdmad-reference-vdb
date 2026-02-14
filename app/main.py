@@ -1,5 +1,10 @@
 from __future__ import annotations
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv(dotenv_path=os.path.join(os.getcwd(), ".env"), override=False)
+
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
@@ -9,8 +14,6 @@ from app.db import create_pool
 from app.embeddings import create_provider
 from app.routes.docs import router as docs_router
 from app.routes.query import router as query_router
-from dotenv import load_dotenv
-load_dotenv()
 
 
 @asynccontextmanager
@@ -20,6 +23,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     yield
     await app.state.embedding_provider.close()
     await app.state.db_pool.close()
+    
 
 
 app = FastAPI(title="cdmad-reference-vdb", lifespan=lifespan)
