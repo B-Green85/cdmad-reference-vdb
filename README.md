@@ -56,7 +56,7 @@ Embedding settings are injected via Helm values. The chart does not provision mo
 
 ## Architecture
 ```
- External HTTPS Embeddings
+External HTTPS Embeddings
             │
             ▼
 Client ───▶ API
