@@ -1,6 +1,6 @@
 # CDMAD Reference Vector Database API
 
-CDMAD (Constraint-Driven Machine-Assisted Development) is a methodology in which
+CDMAD (Constraint-Driven Model-Assisted Development) is a methodology in which
 process constraints are treated as first-class artifacts and enforced externally
 from the agents that execute work.
 
